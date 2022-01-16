@@ -1,0 +1,11 @@
+.googleDiv
+{
+    display: flex;
+    justify-content: center;
+    margin-top: 250px;
+}
+.loginRoot
+{
+    height: 100%;
+    width: 100%;
+}

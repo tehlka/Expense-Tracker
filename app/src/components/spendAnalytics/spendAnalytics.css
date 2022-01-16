@@ -1,0 +1,40 @@
+.spendStack
+{
+    float: left;
+    margin-left: 115px;
+    margin-top: 75px;
+}
+.spendRoot
+{
+    margin-top: 80px;
+}
+.dateChart
+{
+    margin-left: 500px;
+    visibility: hidden;
+}
+.categoryChart
+{
+    float: left;
+    visibility: hidden;
+}
+.vendorChart
+{
+    margin-left: 500px;
+    visibility: hidden;
+}
+.spendLayer1
+{
+    width: 100vw;
+}
+.spendLayer2
+{
+    width: 100vw;
+}
+.spendTable
+{
+    float: right;
+    margin-right: 150px;
+    margin-top: 75px;
+    visibility: hidden;
+}

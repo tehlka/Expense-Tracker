@@ -1,0 +1,14 @@
+.showTransactionStack
+{
+    margin-left: 100px;
+    float: left;
+}
+.showTransactionTable
+{
+    float: right;
+    margin-right: 100px;
+}
+.showTransaction
+{
+    margin-top: 200px;
+}

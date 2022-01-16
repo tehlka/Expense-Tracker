@@ -1,0 +1,11 @@
+.dashboardRoot
+{
+    height: 100%;
+    width: 100%;
+}
+.dashboardButton
+{
+    display: flex;
+    justify-content: center;
+    margin-top: 200px;
+}

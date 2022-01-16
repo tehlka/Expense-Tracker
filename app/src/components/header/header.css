@@ -1,0 +1,28 @@
+.heading
+{
+    padding-top: 10px;
+}
+.headingH1
+{
+    margin-bottom: 0px;
+    margin-block-start: 0;
+}
+.headingH3
+{
+    margin-top: 3px;
+}
+.headingButton
+{
+    display: flex;
+    float: right;
+    margin-right: 15px;
+}
+.headingText
+{
+    float: left;
+    margin-left: 15px;
+}
+#headerAvatar
+{
+    cursor: pointer;
+}

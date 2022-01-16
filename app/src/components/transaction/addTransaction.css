@@ -1,0 +1,11 @@
+.transactionStack
+{
+    display: flex;
+    justify-content: center;
+    margin-top: 100px;
+}
+.transactionRoot
+{
+    height: 100vh;
+    width: 100vw;
+}
