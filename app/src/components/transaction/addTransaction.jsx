@@ -54,8 +54,8 @@ export default function AddTransaction() {
     const [vendors,setVendors] = useState([""]);
     const [date, setDate] = useState(new Date());
     const [amount,setAmount] = useState(0);
-    const [category,setCategory] = useState(null);
-    const [vendor,setVendor] = useState(null);
+    let [category,setCategory] = useState(null);
+    let [vendor,setVendor] = useState(null);
     const [relation,setRelation] = useState("Credit");
     const [buttonStatus,setbuttonStatus] = useState(0);
 
@@ -176,9 +176,15 @@ export default function AddTransaction() {
                             variant="contained" 
                             color={(buttonStatus===0)?"primary":((buttonStatus===1)?"success":"error")}
                             onClick={()=>{
-                                setCategory(document.getElementById("transactionCategory").innerHTML);
-                                setVendor(document.getElementById("transactionPerson").innerHTML);
-                                handleSubmit(date,amount,category,relation,vendor,setbuttonStatus);
+                                let ca = category;
+                                let b1 = document.getElementById("transactionCategory").value;
+                                if (ca !== b1)
+                                    ca = b1;
+                                let ve = vendor;
+                                let b2 = document.getElementById("transactionPerson").value;
+                                if (ve !== b2)
+                                    ve = b2;
+                                handleSubmit(date,amount,ca,relation,ve,setbuttonStatus);
                             }}
                             disabled={
                                 vendor===""||

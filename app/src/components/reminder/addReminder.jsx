@@ -3,27 +3,27 @@ import {useHistory} from "react-router-dom";
 import {IsAuth} from '../Helper/Auth';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import Autocomplete from "@mui/material/Autocomplete";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import './addReminder.css'
+import Header from '../header/header';
 
-function showStatus(msg)
+async function handleSubmit(due_date,amount,relation,person,setbuttonStatus)
 {
-    let message = document.getElementById("formStatus");
-    message.innerHTML = msg;
-    message.hidden = false;
-    setTimeout(()=>{message.hidden=true},1000);
-}
-
-async function handleSubmit(event)
-{
-    event.preventDefault();
-    let amount = event.target.amount.value;
-    let due_date = event.target.due_date.value;
-    let relation = event.target.relation.value;
-    let person = event.target.person.value;
     try{
-        due_date = new Date(due_date+'T00:00:00');
+        due_date.setHours(0,0,0,0);
         amount = Number(amount);
-        if (due_date <= (new Date()) || amount < 1 || relation === '' || person === '')
-            throw(Error("Invalid data"));
         let user_id = jwt_decode(localStorage.getItem("token")).id;
         await axios({
             method: 'post',
@@ -31,13 +31,18 @@ async function handleSubmit(event)
             headers: {'Content-Type' : 'application/json'},
             params: {user_id,amount,due_date,relation,person}
         }).then(()=>{
-            showStatus("Success");
-        },()=>{
-            throw(Error("Invalid data"));
+            setbuttonStatus(1);
+            setTimeout(()=>{window.location.reload(false);},1000)
         })
     }catch(err){
-        showStatus("Invalid Data");
+        setbuttonStatus(-1);
+        setTimeout(()=>{window.location.reload(false);},1000)
     }
+}
+
+function checkError(amount)
+{
+    return isNaN(parseFloat(amount)) || (!isFinite(amount)) || amount <= 0;
 }
 
 let auth = false;
@@ -45,6 +50,12 @@ let imageURL = "";
 export default function AddReminder() {
     let history = useHistory();
     const [funcStatus,setFuncStatus] = useState(false);
+    const [vendors,setVendors] = useState([""]);
+    const [date, setDate] = useState(new Date());
+    const [amount,setAmount] = useState(0);
+    const [vendor,setVendor] = useState(null);
+    const [relation,setRelation] = useState("Lend");
+    const [buttonStatus,setbuttonStatus] = useState(0);
 
     if (!funcStatus){
         (async () => {
@@ -59,42 +70,99 @@ export default function AddReminder() {
                 setFuncStatus(true);
         })();
         return(
-            <div></div>
+            <div>
+                {Header(imageURL)}
+            </div>
         );
     } 
     else{
         if (!auth)
             history.push('/');
+        else if (vendors[0] === "")
+        {
+            let user_id = jwt_decode(localStorage.getItem("token")).id;
+            axios({method: 'post',
+            url: '/get_reminder_vendors',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                setVendors(response.data);
+            });
+        }
         return (
-            <div>
-                <form onSubmit={handleSubmit}>
-                    <label>Amount:
-                    <input 
-                        type="number" 
-                        name="amount" 
-                    />
-                    </label>
-                    <label>Due Date:
-                    <input 
-                        type="Date" 
-                        name="due_date"
-                    />
-                    </label>
-                    <label>Relation:
-                    <select name="relation">
-                        <option value="Lend">Lend</option>
-                        <option value="Borrow">Borrow</option>
-                    </select>
-                    </label>
-                    <label>Person:
-                    <input 
-                        type="String" 
-                        name="person"
-                    />
-                    </label>
-                    <input type="submit" />
-                    <p hidden="true" id="formStatus">Success!!</p>
-                </form>
+            <div className="reminderRoot">
+                {Header(imageURL)}
+                <div className="reminderStack">
+                    <Stack spacing={2} sx={{ width: 300 }}>
+                        <Autocomplete
+                            id="reminderPerson"
+                            freeSolo
+                            options={vendors.map((option) => option)}
+                            value={vendor}
+                            onChange={(event,newValue)=>{
+                                setVendor(newValue);
+                            }}
+                            onClose={(event)=>{
+                                if (event.target.value !== 0)
+                                    setVendor(event.target.value);
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Vendor" />}
+                        />
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <DesktopDatePicker
+                                id="reminderDate"
+                                label="Date"
+                                inputFormat="MM/dd/yyyy"
+                                value={date}
+                                maxDate={new Date()} 
+                                onChange={(newValue)=>{setDate(newValue);}}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+                        <FormControl fullWidth >
+                            <InputLabel htmlFor="reminderAmount">Amount</InputLabel>
+                            <OutlinedInput
+                                id="reminderAmount"
+                                startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+                                label="Amount"
+                                value={amount}
+                                onChange={(event)=>{setAmount(event.target.value);}}
+                            />
+                        </FormControl>
+                        <FormControl fullWidth>
+                            <InputLabel id="inputlabel2">Type</InputLabel>
+                            <Select
+                                labelId="inputlabel2"
+                                id="reminderRelation"
+                                value={relation}
+                                onChange={(event)=>{setRelation(event.target.value);}}
+                            >
+                                <MenuItem value={"Lend"}>Lend</MenuItem>
+                                <MenuItem value={"Borrow"}>Borrow</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <Button 
+                            id = "reminderSubmit"
+                            variant="contained" 
+                            color={(buttonStatus===0)?"primary":((buttonStatus===1)?"success":"error")}
+                            onClick={()=>{
+                                let ve = vendor;
+                                let b1 = document.getElementById("reminderPerson").value;
+                                if (ve !== b1)
+                                    ve = b1;
+                                handleSubmit(date,amount,relation,ve,setbuttonStatus);
+                            }}
+                            disabled={
+                                vendor===""||
+                                vendor===null||
+                                vendor[0]===" "||
+                                checkError(amount)
+                            }
+                        >
+                            Add Reminder
+                        </Button>
+                    </Stack>
+                </div>
             </div>
         );
     }
