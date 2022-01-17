@@ -14,6 +14,7 @@ router.post('/get_all_transactions_by_date',dataController.get_all_transactions_
 router.post('/delete_transaction',dataController.delete_transaction);
 router.post('/add_reminder',dataController.add_reminder);
 router.post('/get_reminder_vendors',dataController.get_reminder_vendors);
+router.post('/get_all_reminders',dataController.get_all_reminders);
 router.post('/delete_reminder',dataController.delete_reminder);
 router.post('/get_reminder',dataController.get_reminder);
 

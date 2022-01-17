@@ -88,12 +88,19 @@ module.exports.get_reminder_vendors = async (req,res) =>
 
 module.exports.get_reminder = async (req,res) =>
 {
-    const {user_id,start_date,end_date,relations,vendors} = req.query;
+    const {user_id,start_date,end_date,relation,vendor} = req.query;
     const reminders = await Reminder.find(
         {user_id:user_id,
         due_date:{$lte:end_date,$gte:start_date},
-        relation:{$in:relations},
-        person:{$in:vendors}});
+        relation:{$in:relation},
+        person:{$in:vendor}});
+    res.status(200).send(reminders);
+}
+
+module.exports.get_all_reminders = async (req,res) =>
+{
+    const {user_id} = req.query;
+    const reminders = await Reminder.find({user_id:user_id});
     res.status(200).send(reminders);
 }
 

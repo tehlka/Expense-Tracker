@@ -26,7 +26,6 @@ async function handleSubmit(startDate,endDate,category,relation,vendor,categorie
         if (vendor.length === 0)
             vendor = vendors;
         let user_id = jwt_decode(localStorage.getItem("token")).id;
-        console.log(startDate,endDate,category,relation,vendor);
         await axios({
             method: 'post',
             url: '/get_transaction',

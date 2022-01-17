@@ -106,7 +106,7 @@ export default function AddReminder() {
                                 if (event.target.value !== 0)
                                     setVendor(event.target.value);
                             }}
-                            renderInput={(params) => <TextField {...params} label="Vendor" />}
+                            renderInput={(params) => <TextField {...params} label="Person" />}
                         />
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker

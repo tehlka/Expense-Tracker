@@ -3,73 +3,58 @@ import {useHistory} from "react-router-dom";
 import {IsAuth} from '../Helper/Auth';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Header from '../header/header';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import TextField from '@mui/material/TextField';
+import Autocomplete from "@mui/material/Autocomplete";
+import ReminderTable from '../table/reminderTable';
+import './showReminder.css'
 
-function showStatus(msg)
+async function handleSubmit(start_date,end_date,relation,vendor,vendors,setbuttonStatus,setReminders)
 {
-    let message = document.getElementById("formStatus");
-    message.innerHTML = msg;
-    message.style.visibility = "visible";
-    setTimeout(()=>{message.style.visibility="hidden"},1000);
-}
-
-function getValue(arr)
-{
-    let newArr = [];
-    for (let i=0;i<arr.length;i++)
-    {
-        if (arr[i].checked)
-            newArr.push(arr[i].value);
-    }
-    if (newArr.length === 0)
-    {
-        for (let i=0;i<arr.length;i++)
-            newArr.push(arr[i].value);            
-    }
-    return newArr;
-}
-
-async function handleSubmit(event,setTransactions)
-{
-    event.preventDefault();
-    let start_date = event.target.start_date.value;
-    let end_date = event.target.end_date.value;
-    let relation = event.target.relation;
-    let vendor = event.target.vendor;
     try{
-        if (vendor[0] === undefined)
-            vendor = [vendor];
-        if (start_date === '')
-            start_date = '0000-01-01';
-        if (end_date === '')
-            end_date = '9999-12-31';
-        start_date = new Date(start_date+'T00:00:00');
-        end_date = new Date(end_date+'T00:00:00');
-        let relations = getValue(relation);
-        let vendors = getValue(vendor);
+        start_date.setHours(0,0,0,0);
+        end_date.setHours(0,0,0,0);
+        if (relation.length === 0)
+            relation = ["Lend","Borrow"];
+        if (vendor.length === 0)
+            vendor = vendors;
         let user_id = jwt_decode(localStorage.getItem("token")).id;
         await axios({
             method: 'post',
             url: '/get_reminder',
             headers: {'Content-Type' : 'application/json'},
-            params: {user_id,start_date,end_date,relations,vendors}
+            params: {user_id,start_date,end_date,relation,vendor}
         }).then((response)=>{
-            showStatus("Success");
-            setTransactions(response.data);
+            setbuttonStatus(1);
+            setTimeout(()=>{setbuttonStatus(0);},1000)
+            setReminders(response.data);
         },()=>{
             throw(Error("Invalid data"));
         })
     }catch(err){
-        showStatus("Invalid Data");
+        setbuttonStatus(-1);
+        setTimeout(()=>{setbuttonStatus(0);},1000)
     }
 }
 
 let auth = false;
+let flag = 1;
 let imageURL = "";
 export default function ShowReminder() {
     let history = useHistory();
     const [funcStatus,setFuncStatus] = useState(false);
     const [vendors,setVendors] = useState([""]);
     const [reminders,setReminders] = useState([]);
+    const [startDate, setstartDate] = useState(new Date());
+    const [endDate,setendDate] = useState(new Date());
+    const [vendor,setVendor] = useState([]);
+    const [relation,setRelation] = useState([]);
+    const [buttonStatus,setbuttonStatus] = useState(0);
 
     if (!funcStatus){
         (async () => {
@@ -84,7 +69,10 @@ export default function ShowReminder() {
                 setFuncStatus(true);
         })();
         return(
-            <div></div>
+            <div>
+                {Header(imageURL)}
+                {ReminderTable(reminders)}
+            </div>
         );
     }
     else{
@@ -92,9 +80,9 @@ export default function ShowReminder() {
             history.push('/');
         else
         {
+            let user_id = jwt_decode(localStorage.getItem("token")).id;
             if (vendors[0] === "")
             {
-                let user_id = jwt_decode(localStorage.getItem("token")).id;
                 axios({method: 'post',
                 url: '/get_reminder_vendors',
                 headers: {'Content-Type' : 'application/json'},
@@ -103,91 +91,94 @@ export default function ShowReminder() {
                     setVendors(response.data);
                 });
             }
+            if (reminders.length === 0 && flag === 1)
+            {
+                axios({method: 'post',
+                url: '/get_all_reminders',
+                headers: {'Content-Type' : 'application/json'},
+                params: {user_id}})
+                .then(response=>{
+                    setReminders(response.data);
+                });
+            }
         }
-        if (vendors.length === 0)
-            return (
-                <div>
-                    <h1>No Reminder</h1>
-                </div>
-            );
         return (
             <div>
-                <form onSubmit={async (event)=>{
-                    handleSubmit(event,setReminders);
-                }}>
-                    <div>
-                        <label> Start Date: </label>
-                        <input 
-                            type="Date" 
-                            name="start_date"
-                        />
+                {Header(imageURL)}
+                <div className="showReminder">
+                    <div className="showReminderStack">
+                        <Stack spacing={2} sx={{ width: 300 }}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DesktopDatePicker
+                                    id="reminderStartDate"
+                                    label="Start Date"
+                                    inputFormat="MM/dd/yyyy"
+                                    value={startDate}
+                                    onChange={(newValue)=>{setstartDate(newValue);}}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DesktopDatePicker
+                                    id="reminderEndDate"
+                                    label="End Date"
+                                    inputFormat="MM/dd/yyyy"
+                                    value={endDate}
+                                    onChange={(newValue)=>{setendDate(newValue);}}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
+                            <Autocomplete
+                                multiple
+                                id="showreminderVendor"
+                                options={vendors}
+                                getOptionLabel={(option) => option}
+                                filterSelectedOptions
+                                value={vendor}
+                                onChange={(event,newValue)=>{
+                                    setVendor(newValue);
+                                }}
+                                renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Person"
+                                />
+                                )}
+                            />
+                            <Autocomplete
+                                multiple
+                                id="showreminderRelation"
+                                options={["Lend","Borrow"]}
+                                getOptionLabel={(option) => option}
+                                filterSelectedOptions
+                                value={relation}
+                                onChange={(event,newValue)=>{
+                                    setRelation(newValue);
+                                }}
+                                renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Relation"
+                                />
+                                )}
+                            />
+                            <Button 
+                                id = "showreminderSubmit"
+                                variant="contained" 
+                                color={(buttonStatus===0)?"primary":((buttonStatus===1)?"success":"error")}
+                                onClick={(event)=>{
+                                    handleSubmit(startDate,endDate,relation,vendor,vendors,setbuttonStatus,setReminders);
+                                    if (event.isTrusted)
+                                        flag = 0;
+                                }}
+                            >
+                                Display Reminder
+                            </Button>
+                        </Stack>
                     </div>
-                    <div>
-                        <label> End Date: </label>
-                        <input 
-                            type="Date" 
-                            name="end_date"
-                        />
+                    <div className="showReminderTable">
+                        {ReminderTable(reminders.sort((a,b)=>((a.date<b.date)?-1:1)))}
                     </div>
-                    <div>
-                        <label> Relation: </label>
-                        <label> Lend </label>
-                        <input
-                            type="checkbox"
-                            name="relation"
-                            value="Lend"
-                        />
-                        <label> Borrow </label>
-                        <input
-                            type="checkbox"
-                            name="relation"
-                            value="Borrow"
-                        />
-                    </div>
-                    <div>
-                        <label> Person: </label>
-                        {vendors.map((name,index)=>{
-                            return(
-                                <div style={{display: "inline"}} key={3*index}>
-                                    <label key={3*index+1}> {name} </label>
-                                    <input
-                                        key={3*index+2}
-                                        type="checkbox"
-                                        name="vendor"
-                                        value={name}
-                                    />
-                                </div>
-                            );
-                        })}
-                    </div>
-                    <div>
-                        <input id="submitButton" type="submit" style={{display: "inline"}}/>
-                        <p style={{display: "inline",visibility:"hidden"}} id="formStatus">Success!!</p>
-                    </div>
-                </form>
-                <div>
-                    {reminders.map((object,index)=>{
-                        return(
-                            <div key={6*index}>
-                                <p key={6*index+1} style={{display: "inline"}}>{(new Date(object.due_date)).toLocaleDateString("en-US",{ year:'numeric',month:'long',day:'numeric'})} </p>
-                                <p key={6*index+2} style={{display: "inline"}}>{object.person} </p>
-                                <p key={6*index+3} style={{display: "inline"}}>{object.relation} </p>
-                                <p key={6*index+4} style={{display: "inline"}}>{object.amount} </p>
-                                <button key={6*index+5} onClick={async (event)=>{
-                                    event.preventDefault();
-                                    let reminder_id = object._id;
-                                    await axios({
-                                        method: 'post',
-                                        url: '/delete_reminder',
-                                        headers: {'Content-Type' : 'application/json'},
-                                        params: {reminder_id}
-                                    }).then(()=>{
-                                        document.getElementById("submitButton").click();
-                                    })
-                                }} style={{display: "inline"}}> Delete </button>
-                            </div>
-                        );
-                    })}
                 </div>
             </div>
         );
