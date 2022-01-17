@@ -112,6 +112,16 @@ export default function ShowTransaction() {
                 headers: {'Content-Type' : 'application/json'},
                 params: {user_id}})
                 .then(response=>{
+                    if (response.data.length !== 0)
+                    {
+                        let en = response.data[0].date;
+                        for (let i=0;i<response.data.length;i++)
+                        {
+                            if (response.data[i].date < en)
+                                en = response.data[i].date;
+                        }
+                        setstartDate(en);
+                    }
                     setTransactions(response.data);
                 });
             }

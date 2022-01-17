@@ -54,8 +54,8 @@ export default function AddTransaction() {
     const [vendors,setVendors] = useState([""]);
     const [date, setDate] = useState(new Date());
     const [amount,setAmount] = useState(0);
-    let [category,setCategory] = useState(null);
-    let [vendor,setVendor] = useState(null);
+    const [category,setCategory] = useState(null);
+    const [vendor,setVendor] = useState(null);
     const [relation,setRelation] = useState("Credit");
     const [buttonStatus,setbuttonStatus] = useState(0);
 

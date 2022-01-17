@@ -98,6 +98,16 @@ export default function ShowReminder() {
                 headers: {'Content-Type' : 'application/json'},
                 params: {user_id}})
                 .then(response=>{
+                    if (response.data.length !== 0)
+                    {
+                        let en = response.data[0].due_date;
+                        for (let i=0;i<response.data.length;i++)
+                        {
+                            if (response.data[i].due_date < en)
+                                en = response.data[i].due_date;
+                        }
+                        setstartDate(en);
+                    }
                     setReminders(response.data);
                 });
             }
@@ -177,7 +187,7 @@ export default function ShowReminder() {
                         </Stack>
                     </div>
                     <div className="showReminderTable">
-                        {ReminderTable(reminders.sort((a,b)=>((a.date<b.date)?-1:1)))}
+                        {ReminderTable(reminders.sort((a,b)=>((a.due_date<b.due_date)?-1:1)))}
                     </div>
                 </div>
             </div>
