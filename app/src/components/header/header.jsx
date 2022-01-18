@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {LogOut} from '../Helper/Auth';
 import {useHistory} from "react-router-dom"
+const logo = require("../assets/logo.jpg"); 
 
 export default function Header(imageURL)
 {
@@ -13,6 +14,7 @@ export default function Header(imageURL)
     return(
         <div className="heading">
             <div className='headingText'>
+                <img src={logo} alt="logo" className='headingLogo'/>
                 <h1 className='headingH1'>Expense Tracker</h1>
                 <h3 className='headingH3'>A one stop solution to manage all expenses</h3>
             </div>
@@ -31,7 +33,7 @@ export default function Header(imageURL)
                     endIcon={<LogoutIcon />}
                     onClick={()=>{
                         LogOut();
-                        history.push("/");
+                        window.location.reload(false);
                     }}
                 >
                 </Button>

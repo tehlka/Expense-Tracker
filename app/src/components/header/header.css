@@ -2,6 +2,14 @@
 {
     padding-top: 10px;
 }
+.headingLogo
+{
+    height: 70px;
+    width: 60px;
+    margin-right: 10px;
+    display: flex;
+    float: left;
+}
 .headingH1
 {
     margin-bottom: 0px;
@@ -10,6 +18,7 @@
 .headingH3
 {
     margin-top: 3px;
+    width: 500px;
 }
 .headingButton
 {
