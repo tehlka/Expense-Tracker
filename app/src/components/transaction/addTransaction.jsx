@@ -71,7 +71,10 @@ export default function AddTransaction() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }   
         })();
         return(
             <div style={{visibility:'hidden'}}>

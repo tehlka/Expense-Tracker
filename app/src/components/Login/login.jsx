@@ -36,7 +36,10 @@ export default function Login() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }      
         })();
         return(
             <div>

@@ -126,7 +126,10 @@ export default function SpendAnalytics() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }      
         })();
         return(
             <div>

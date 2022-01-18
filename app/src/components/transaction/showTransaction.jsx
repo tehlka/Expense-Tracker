@@ -79,7 +79,10 @@ export default function ShowTransaction() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }      
         })();
         return(
             <div style={{visibility:'hidden'}}>

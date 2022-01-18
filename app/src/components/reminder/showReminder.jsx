@@ -75,7 +75,10 @@ export default function ShowReminder() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }      
         })();
         return(
             <div style={{visibility:'hidden'}}>

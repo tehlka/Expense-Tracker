@@ -69,7 +69,10 @@ export default function AddReminder() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }      
         })();
         return(
             <div style={{visibility:'hidden'}}>

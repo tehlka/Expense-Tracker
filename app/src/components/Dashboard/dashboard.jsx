@@ -11,7 +11,6 @@ let imageURL = "";
 export default function Dashboard() {
     let history = useHistory();
     const [funcStatus,setFuncStatus] = useState(false);
-    
     if (!funcStatus){
         (async () => {
             let authObj = (await IsAuth());
@@ -22,7 +21,10 @@ export default function Dashboard() {
                 setFuncStatus(true);
             }
             else
+            {
+                auth = false;
                 setFuncStatus(true);
+            }              
         })();
         return(
             <div>
@@ -32,7 +34,7 @@ export default function Dashboard() {
     }
     else{
         if (!auth)
-            history.push("/");            
+            history.push("/");   
         return (
             <div className="dashboardRoot">
                 {Header(imageURL)}
