@@ -90,14 +90,21 @@ async function handleSubmit(startDate,endDate,relation,setbuttonStatus,setTransa
             else
                 document.getElementsByClassName("vendorChart")[0].style.visibility = "hidden";
             setbuttonStatus(1);
-            setTimeout(()=>{setbuttonStatus(0);},1000)
+            document.getElementById("spendSubmit").innerHTML = "Success";
+            setTimeout(()=>{
+                setbuttonStatus(0);
+                document.getElementById("spendSubmit").innerHTML = "SHOW ANALYTICS";
+            },1000)
         },()=>{
             throw(Error("Invalid data"));
         })
     }catch(err){
-        console.log(err);
         setbuttonStatus(-1);
-        setTimeout(()=>{setbuttonStatus(0);},1000)
+        document.getElementById("spendSubmit").innerHTML = "Error";
+        setTimeout(()=>{
+            setbuttonStatus(0);
+            document.getElementById("spendSubmit").innerHTML = "SHOW ANALYTICS";
+        },1000)
     }
 }
 

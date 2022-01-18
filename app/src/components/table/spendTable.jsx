@@ -8,14 +8,14 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 export default function SpendTable(creditSum,debitSum) {
-    let rows = [{name:"Credit",amount:creditSum},{name:"Debit",amount:debitSum},{name:"Total",amount:creditSum-debitSum}]
+    let rows = [{name:"Credit",amount:creditSum},{name:"Debit",amount:debitSum},{name:"Net",amount:creditSum-debitSum}]
     return (
         <TableContainer component={Paper}>
         <Table sx={{ minWidth: 200 }}>
             <TableHead>
             <TableRow>
                 <TableCell>Type</TableCell>
-                <TableCell align="right">Spending</TableCell>
+                <TableCell align="right">Amount</TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
