@@ -4,16 +4,16 @@ An expense managing website
 ## Table of Contents
 
 * [About the Project](#about-the-project)
-  * [Built With](#built-with)
+* [Built With](#built-with)
 * [Getting Started](#getting-started)
-  * [Installation](#installation)
+* [Installation](#installation)
  
 
 
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This website has been made to help people keep a track of their expenses and analyse their spendings.
+This website is made to help people keep a track of their expenses and analyse their spendings.
 
 Features:
 * Add/Remove a transaction
