@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import LogoutIcon from '@mui/icons-material/Logout';
 import {LogOut} from '../Helper/Auth';
 import {useHistory} from "react-router-dom"
-import {Avatar} from "@material-ui/core";
 
 export default function Header(imageURL)
 {
@@ -18,17 +17,14 @@ export default function Header(imageURL)
                 <h3 className='headingH3'>A one stop solution to manage all expenses</h3>
             </div>
             <div className='headingButton' style={{"visibility":(show?"visible":"hidden")}}>
-                <Avatar
+                <img
                     id="headerAvatar"
-                    component="button"
-                    variant="square"
                     onClick={() => {
                         history.push("/");
                     }}
                     src={imageURL}
-                    sx={{border:0,backgroundColor:"white",width:45,height:38}}
-                    >
-                </Avatar>
+                    alt='avatar'
+                    />
                 <Button
                     className='headingLogout'
                     size='large'

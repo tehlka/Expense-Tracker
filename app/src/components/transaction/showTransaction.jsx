@@ -73,7 +73,7 @@ export default function ShowTransaction() {
                 setFuncStatus(true);
         })();
         return(
-            <div>
+            <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
                 {TransactionTable(transactions)}
             </div>

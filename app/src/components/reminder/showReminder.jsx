@@ -69,7 +69,7 @@ export default function ShowReminder() {
                 setFuncStatus(true);
         })();
         return(
-            <div>
+            <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
                 {ReminderTable(reminders)}
             </div>

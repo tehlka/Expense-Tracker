@@ -72,7 +72,7 @@ export default function AddTransaction() {
                 setFuncStatus(true);
         })();
         return(
-            <div>
+            <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
             </div>
         );

@@ -70,7 +70,7 @@ export default function AddReminder() {
                 setFuncStatus(true);
         })();
         return(
-            <div>
+            <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
             </div>
         );
