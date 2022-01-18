@@ -32,10 +32,12 @@ async function handleSubmit(date,amount,category,relation,person,setbuttonStatus
             params: {user_id,amount,date,category,relation,person}
         }).then(()=>{
             setbuttonStatus(1);
+            document.getElementById("transactionSubmit").innerHTML = "Success";
             setTimeout(()=>{window.location.reload(false);},1000)
         })
     }catch(err){
         setbuttonStatus(-1);
+        document.getElementById("transactionSubmit").innerHTML = "Error";
         setTimeout(()=>{window.location.reload(false);},1000)
     }
 }

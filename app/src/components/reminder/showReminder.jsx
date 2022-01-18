@@ -17,6 +17,7 @@ import './showReminder.css'
 async function handleSubmit(start_date,end_date,relation,vendor,vendors,setbuttonStatus,setReminders)
 {
     try{
+        start_date = new Date(start_date);
         start_date.setHours(0,0,0,0);
         end_date.setHours(0,0,0,0);
         if (relation.length === 0)
@@ -31,13 +32,21 @@ async function handleSubmit(start_date,end_date,relation,vendor,vendors,setbutto
             params: {user_id,start_date,end_date,relation,vendor}
         }).then((response)=>{
             setbuttonStatus(1);
-            setTimeout(()=>{setbuttonStatus(0);},1000)
+            document.getElementById("showreminderSubmit").innerHTML = "Success";
+            setTimeout(()=>{
+                setbuttonStatus(0);
+                document.getElementById("showreminderSubmit").innerHTML = "Display Reminder";
+            },1000)
             setReminders(response.data);
         },()=>{
             throw(Error("Invalid data"));
         })
     }catch(err){
-        setbuttonStatus(-1);
+        document.getElementById("showreminderSubmit").innerHTML = "Error";
+        setTimeout(()=>{
+            setbuttonStatus(0);
+            document.getElementById("showreminderSubmit").innerHTML = "Display Reminder";
+        },1000)
         setTimeout(()=>{setbuttonStatus(0);},1000)
     }
 }

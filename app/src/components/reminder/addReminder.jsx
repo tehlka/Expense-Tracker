@@ -32,10 +32,12 @@ async function handleSubmit(due_date,amount,relation,person,setbuttonStatus)
             params: {user_id,amount,due_date,relation,person}
         }).then(()=>{
             setbuttonStatus(1);
+            document.getElementById("reminderSubmit").innerHTML = "Success";
             setTimeout(()=>{window.location.reload(false);},1000)
         })
     }catch(err){
         setbuttonStatus(-1);
+        document.getElementById("reminderSubmit").innerHTML = "Error";
         setTimeout(()=>{window.location.reload(false);},1000)
     }
 }

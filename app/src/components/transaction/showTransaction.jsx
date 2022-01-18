@@ -17,6 +17,7 @@ import './showTransaction.css'
 async function handleSubmit(startDate,endDate,category,relation,vendor,categories,vendors,setbuttonStatus,setTransactions)
 {
     try{
+        startDate = new Date(startDate);
         startDate.setHours(0,0,0,0);
         endDate.setHours(0,0,0,0);
         if (relation.length === 0)
@@ -33,14 +34,22 @@ async function handleSubmit(startDate,endDate,category,relation,vendor,categorie
             params: {user_id,startDate,endDate,relation,category,vendor}
         }).then((response)=>{
             setbuttonStatus(1);
-            setTimeout(()=>{setbuttonStatus(0);},1000)
+            document.getElementById("showtransactionSubmit").innerHTML = "Success";
+            setTimeout(()=>{
+                setbuttonStatus(0);
+                document.getElementById("showtransactionSubmit").innerHTML = "Display Transaction";
+            },1000)
             setTransactions(response.data);
         },()=>{
             throw(Error("Invalid data"));
         })
     }catch(err){
         setbuttonStatus(-1);
-        setTimeout(()=>{setbuttonStatus(0);},1000)
+        document.getElementById("showtransactionSubmit").innerHTML = "Error";
+        setTimeout(()=>{
+            setbuttonStatus(0);
+            document.getElementById("showtransactionSubmit").innerHTML = "Display Transaction";
+        },1000)
     }
 }
 
