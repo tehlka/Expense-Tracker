@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {IsAuth} from '../Helper/Auth';
 import axios from 'axios';
@@ -61,21 +61,35 @@ export default function AddTransaction() {
     const [relation,setRelation] = useState("Credit");
     const [buttonStatus,setbuttonStatus] = useState(0);
 
-    if (!funcStatus){
+    // for cleanup, useEffect will be called when component unmounts
+    useEffect(()=>{
+        let isCancelled = false;
         (async () => {
             let authObj = (await IsAuth());
             if (authObj.auth === true)
             {
                 auth = true;
                 imageURL = authObj.imageURL;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }
             else
             {
                 auth = false;
-                setFuncStatus(true);
-            }   
+                if (!isCancelled)
+                    setFuncStatus(true);
+            }              
         })();
+        return ()=>{
+            isCancelled=true;
+        };
+    },[]);
+    // https://stackoverflow.com/questions/52912238/render-methods-should-be-a-pure-function-of-props-and-state
+    useEffect(()=>{
+        if (funcStatus && (!auth))
+            history.push('/');
+    },[funcStatus,history]);
+    if ((!funcStatus) || (!auth)){
         return(
             <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
@@ -83,32 +97,26 @@ export default function AddTransaction() {
         );
     }
     else{
-        if (!auth)
-            history.push('/');
-        else
+        let user_id = jwt_decode(localStorage.getItem("token")).id;
+        if (categories[0] === "")
         {
-            if (categories[0] === "")
-            {
-                let user_id = jwt_decode(localStorage.getItem("token")).id;
-                axios({method: 'post',
-                url: '/get_transaction_categories',
-                headers: {'Content-Type' : 'application/json'},
-                params: {user_id}})
-                .then(response=>{
-                    setCategories(response.data);
-                },error=>{console.log(error)});
-            }
-            if (vendors[0] === "")
-            {
-                let user_id = jwt_decode(localStorage.getItem("token")).id;
-                axios({method: 'post',
-                url: '/get_transaction_vendors',
-                headers: {'Content-Type' : 'application/json'},
-                params: {user_id}})
-                .then(response=>{
-                    setVendors(response.data);
-                });
-            }
+            axios({method: 'post',
+            url: '/get_transaction_categories',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                setCategories(response.data);
+            },error=>{console.log(error)});
+        }
+        if (vendors[0] === "")
+        {
+            axios({method: 'post',
+            url: '/get_transaction_vendors',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                setVendors(response.data);
+            });
         }
         return (
             <div className="transactionRoot">

@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import { GoogleLogin } from "react-google-login";
 import axios from 'axios';
 import {useHistory} from "react-router-dom";
@@ -28,19 +28,34 @@ export default function Login() {
     
     const [funcStatus,setFuncStatus] = useState(false);
 
-    if (!funcStatus){
+    // for cleanup, useEffect will be called when component unmounts
+    useEffect(()=>{
+        let isCancelled = false;
         (async () => {
-            if ((await IsAuth()).auth === true)
+            let authObj = (await IsAuth());
+            if (authObj.auth === true)
             {
                 auth = true;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }
             else
             {
                 auth = false;
-                setFuncStatus(true);
-            }      
+                if (!isCancelled)
+                    setFuncStatus(true);
+            }              
         })();
+        return ()=>{
+            isCancelled=true;
+        };
+    },[]);
+    // https://stackoverflow.com/questions/52912238/render-methods-should-be-a-pure-function-of-props-and-state
+    useEffect(()=>{
+        if (funcStatus && auth)
+            history.push('/dashboard');
+    },[funcStatus,history]);
+    if ((!funcStatus) || auth){
         return(
             <div>
                 {Header("")}
@@ -48,8 +63,6 @@ export default function Login() {
         );
     }        
     else{
-        if (auth)
-            history.push('/dashboard');
         return (
             <div className="loginRoot">
                 {Header("")}

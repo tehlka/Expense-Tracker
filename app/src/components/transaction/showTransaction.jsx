@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {IsAuth} from '../Helper/Auth';
 import axios from 'axios';
@@ -69,21 +69,35 @@ export default function ShowTransaction() {
     const [relation,setRelation] = useState([]);
     const [buttonStatus,setbuttonStatus] = useState(0);
 
-    if (!funcStatus){
+    // for cleanup, useEffect will be called when component unmounts
+    useEffect(()=>{
+        let isCancelled = false;
         (async () => {
             let authObj = (await IsAuth());
             if (authObj.auth === true)
             {
                 auth = true;
                 imageURL = authObj.imageURL;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }
             else
             {
                 auth = false;
-                setFuncStatus(true);
-            }      
+                if (!isCancelled)
+                    setFuncStatus(true);
+            }              
         })();
+        return ()=>{
+            isCancelled=true;
+        };
+    },[]);
+    // https://stackoverflow.com/questions/52912238/render-methods-should-be-a-pure-function-of-props-and-state
+    useEffect(()=>{
+        if (funcStatus && (!auth))
+            history.push('/');
+    },[funcStatus,history]);
+    if ((!funcStatus) || (!auth)){
         return(
             <div style={{visibility:'hidden'}}>
                 {Header(imageURL)}
@@ -92,51 +106,46 @@ export default function ShowTransaction() {
         );
     }
     else{
-        if (!auth)
-            history.push('/');
-        else
+        let user_id = jwt_decode(localStorage.getItem("token")).id;
+        if (categories[0] === "")
         {
-            let user_id = jwt_decode(localStorage.getItem("token")).id;
-            if (categories[0] === "")
-            {
-                axios({method: 'post',
-                url: '/get_transaction_categories',
-                headers: {'Content-Type' : 'application/json'},
-                params: {user_id}})
-                .then(response=>{
-                    setCategories(response.data);
-                },error=>{console.log(error)});
-            }
-            if (vendors[0] === "")
-            {
-                axios({method: 'post',
-                url: '/get_transaction_vendors',
-                headers: {'Content-Type' : 'application/json'},
-                params: {user_id}})
-                .then(response=>{
-                    setVendors(response.data);
-                });
-            }
-            if (transactions.length === 0 && flag === 1)
-            {
-                axios({method: 'post',
-                url: '/get_all_transactions',
-                headers: {'Content-Type' : 'application/json'},
-                params: {user_id}})
-                .then(response=>{
-                    if (response.data.length !== 0)
+            axios({method: 'post',
+            url: '/get_transaction_categories',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                setCategories(response.data);
+            },error=>{console.log(error)});
+        }
+        if (vendors[0] === "")
+        {
+            axios({method: 'post',
+            url: '/get_transaction_vendors',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                setVendors(response.data);
+            });
+        }
+        if (transactions.length === 0 && flag === 1)
+        {
+            axios({method: 'post',
+            url: '/get_all_transactions',
+            headers: {'Content-Type' : 'application/json'},
+            params: {user_id}})
+            .then(response=>{
+                if (response.data.length !== 0)
+                {
+                    let en = response.data[0].date;
+                    for (let i=0;i<response.data.length;i++)
                     {
-                        let en = response.data[0].date;
-                        for (let i=0;i<response.data.length;i++)
-                        {
-                            if (response.data[i].date < en)
-                                en = response.data[i].date;
-                        }
-                        setstartDate(en);
+                        if (response.data[i].date < en)
+                            en = response.data[i].date;
                     }
-                    setTransactions(response.data);
-                });
-            }
+                    setstartDate(en);
+                }
+                setTransactions(response.data);
+            });
         }
         return (
             <div>

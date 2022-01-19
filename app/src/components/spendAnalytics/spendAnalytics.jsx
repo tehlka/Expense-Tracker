@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import {useHistory} from "react-router-dom";
 import {IsAuth} from '../Helper/Auth';
 import { Chart } from "react-google-charts";
@@ -123,21 +123,35 @@ export default function SpendAnalytics() {
     const [creditSum,setcreditSum] = useState(0);
     const [debitSum,setdebitSum] = useState(0);
 
-    if (!funcStatus){
+    // for cleanup, useEffect will be called when component unmounts
+    useEffect(()=>{
+        let isCancelled = false;
         (async () => {
             let authObj = (await IsAuth());
             if (authObj.auth === true)
             {
                 auth = true;
                 imageURL = authObj.imageURL;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }
             else
             {
                 auth = false;
-                setFuncStatus(true);
-            }      
+                if (!isCancelled)
+                    setFuncStatus(true);
+            }              
         })();
+        return ()=>{
+            isCancelled=true;
+        };
+    },[]);
+    // https://stackoverflow.com/questions/52912238/render-methods-should-be-a-pure-function-of-props-and-state
+    useEffect(()=>{
+        if (funcStatus && (!auth))
+            history.push('/');
+    },[funcStatus,history]);
+    if ((!funcStatus) || (!auth)){
         return(
             <div>
                 {Header(imageURL)}
@@ -145,8 +159,6 @@ export default function SpendAnalytics() {
         );
     }  
     else{
-        if (!auth)
-            history.push('/');
         return (
             <div>
                 {Header(imageURL)}

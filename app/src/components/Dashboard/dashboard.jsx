@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useEffect, useState} from "react";
 import {useHistory} from "react-router-dom"
 import {IsAuth} from '../Helper/Auth';
 import Header from '../header/header';
@@ -11,30 +11,43 @@ let imageURL = "";
 export default function Dashboard() {
     let history = useHistory();
     const [funcStatus,setFuncStatus] = useState(false);
-    if (!funcStatus){
+    
+    // for cleanup, useEffect will be called when component unmounts
+    useEffect(()=>{
+        let isCancelled = false;
         (async () => {
             let authObj = (await IsAuth());
             if (authObj.auth === true)
             {
                 auth = true;
                 imageURL = authObj.imageURL;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }
             else
             {
                 auth = false;
-                setFuncStatus(true);
+                if (!isCancelled)
+                    setFuncStatus(true);
             }              
         })();
+        return ()=>{
+            isCancelled=true;
+        };
+    },[]);
+    // https://stackoverflow.com/questions/52912238/render-methods-should-be-a-pure-function-of-props-and-state
+    useEffect(()=>{
+        if (funcStatus && (!auth))
+            history.push('/');
+    },[funcStatus,history]);
+    if ((!funcStatus) || (!auth)){
         return(
             <div>
                 {Header(imageURL)}
             </div>
         );
     }
-    else{
-        if (!auth)
-            history.push("/");   
+    else{             
         return (
             <div className="dashboardRoot">
                 {Header(imageURL)}
