@@ -49,11 +49,13 @@ function checkError(amount)
 
 let auth = false;
 let imageURL = "";
+let tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate()+1);
 export default function AddReminder() {
     let history = useHistory();
     const [funcStatus,setFuncStatus] = useState(false);
     const [vendors,setVendors] = useState([""]);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(tomorrow);
     const [amount,setAmount] = useState(0);
     const [vendor,setVendor] = useState(null);
     const [relation,setRelation] = useState("Lend");
@@ -131,7 +133,7 @@ export default function AddReminder() {
                                 label="Date"
                                 inputFormat="MM/dd/yyyy"
                                 value={date}
-                                minDate={new Date()} 
+                                minDate={tomorrow} 
                                 onChange={(newValue)=>{setDate(newValue);}}
                                 renderInput={(params) => <TextField {...params} />}
                             />
