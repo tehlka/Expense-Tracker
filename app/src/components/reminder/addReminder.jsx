@@ -131,7 +131,7 @@ export default function AddReminder() {
                                 label="Date"
                                 inputFormat="MM/dd/yyyy"
                                 value={date}
-                                maxDate={new Date()} 
+                                minDate={new Date()} 
                                 onChange={(newValue)=>{setDate(newValue);}}
                                 renderInput={(params) => <TextField {...params} />}
                             />
