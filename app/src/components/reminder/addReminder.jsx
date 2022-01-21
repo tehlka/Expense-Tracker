@@ -113,20 +113,16 @@ export default function AddReminder() {
                 {Header(imageURL)}
                 <div className="reminderStack">
                     <Stack spacing={2} sx={{ width: 300 }}>
-                        <Autocomplete
-                            id="reminderPerson"
-                            freeSolo
-                            options={vendors.map((option) => option)}
-                            value={vendor}
-                            onChange={(event,newValue)=>{
-                                setVendor(newValue);
-                            }}
-                            onClose={(event)=>{
-                                if (event.target.value !== 0)
-                                    setVendor(event.target.value);
-                            }}
-                            renderInput={(params) => <TextField {...params} label="Person" />}
-                        />
+                        <FormControl fullWidth >
+                            <InputLabel htmlFor="reminderAmount">Amount</InputLabel>
+                            <OutlinedInput
+                                id="reminderAmount"
+                                startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+                                label="Amount"
+                                value={amount}
+                                onChange={(event)=>{setAmount(event.target.value);}}
+                            />
+                        </FormControl>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 id="reminderDate"
@@ -138,16 +134,16 @@ export default function AddReminder() {
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </LocalizationProvider>
-                        <FormControl fullWidth >
-                            <InputLabel htmlFor="reminderAmount">Amount</InputLabel>
-                            <OutlinedInput
-                                id="reminderAmount"
-                                startAdornment={<InputAdornment position="start">₹</InputAdornment>}
-                                label="Amount"
-                                value={amount}
-                                onChange={(event)=>{setAmount(event.target.value);}}
-                            />
-                        </FormControl>
+                        <Autocomplete
+                            id="reminderPerson"
+                            freeSolo
+                            options={vendors.map((option) => option)}
+                            value={vendor}
+                            onInputChange={(event,newValue)=>{
+                                setVendor(newValue);
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Person" />}
+                        />
                         <FormControl fullWidth>
                             <InputLabel id="inputlabel2">Type</InputLabel>
                             <Select

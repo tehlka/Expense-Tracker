@@ -123,34 +123,16 @@ export default function AddTransaction() {
                 {Header(imageURL)}
                 <div className="transactionStack">
                     <Stack spacing={2} sx={{ width: 300 }}>
-                        <Autocomplete
-                            id="transactionPerson"
-                            freeSolo
-                            options={vendors.map((option) => option)}
-                            value={vendor}
-                            onChange={(event,newValue)=>{
-                                setVendor(newValue);
-                            }}
-                            onClose={(event)=>{
-                                if (event.target.value !== 0)
-                                    setVendor(event.target.value);
-                            }}
-                            renderInput={(params) => <TextField {...params} label="Vendor" />}
-                        />
-                        <Autocomplete
-                            id="transactionCategory"
-                            freeSolo
-                            options={categories.map((option) => option)}
-                            value={category}
-                            onChange={(event,newValue)=>{
-                                setCategory(newValue);
-                            }}
-                            onClose={(event)=>{
-                                if (event.target.value !== 0)
-                                    setCategory(event.target.value);
-                            }}
-                            renderInput={(params) => <TextField {...params} label="Category" />}
-                        />
+                        <FormControl fullWidth >
+                            <InputLabel htmlFor="transactionAmount">Amount</InputLabel>
+                            <OutlinedInput
+                                id="transactionAmount"
+                                startAdornment={<InputAdornment position="start">₹</InputAdornment>}
+                                label="Amount"
+                                value={amount}
+                                onChange={(event)=>{setAmount(event.target.value);}}
+                            />
+                        </FormControl>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                                 id="transactionDate"
@@ -162,16 +144,26 @@ export default function AddTransaction() {
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </LocalizationProvider>
-                        <FormControl fullWidth >
-                            <InputLabel htmlFor="transactionAmount">Amount</InputLabel>
-                            <OutlinedInput
-                                id="transactionAmount"
-                                startAdornment={<InputAdornment position="start">₹</InputAdornment>}
-                                label="Amount"
-                                value={amount}
-                                onChange={(event)=>{setAmount(event.target.value);}}
-                            />
-                        </FormControl>
+                        <Autocomplete
+                            id="transactionPerson"
+                            freeSolo
+                            options={vendors.map((option) => option)}
+                            value={vendor}
+                            onInputChange={(event,newValue)=>{
+                                setVendor(newValue);
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Vendor" />}
+                        />
+                        <Autocomplete
+                            id="transactionCategory"
+                            freeSolo
+                            options={categories.map((option) => option)}
+                            value={category}
+                            onInputChange={(event,newValue)=>{
+                                setCategory(newValue);
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Category" />}
+                        />
                         <FormControl fullWidth>
                             <InputLabel id="inputlabel1">Type</InputLabel>
                             <Select
