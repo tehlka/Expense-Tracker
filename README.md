@@ -13,7 +13,7 @@ An expense managing website
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-This website is made to help people keep a track of their expenses and analyse their spendings.
+This website is made to help people keep a track of their expenses and analyse their spending.
 
 Features:
 * Add/Remove a transaction
